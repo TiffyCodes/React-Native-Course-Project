@@ -11,6 +11,7 @@ const DirectoryScreen = ({ navigation }) => {
         return (
             // <ListItem onPress={() => props.onPress(campsite.id)}>
             <ListItem onPress={() => navigation.navigate('CampsiteInfo', { campsite })}>
+                {/* above sets the campsite param via the navigation's prop's navigate() fx */}
                 <Avatar source={campsite.image} rounded />
                 <ListItem.Content>
                     <ListItem.Title>{campsite.name}</ListItem.Title>
