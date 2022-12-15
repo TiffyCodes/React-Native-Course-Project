@@ -8,8 +8,22 @@ import { Card } from 'react-native-elements';
 // import { PARTNERS } from '../shared/partners';
 import { useSelector } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import Loading from '../components/LoadingComponent';
 
-const FeaturedItem = ({item}) => {
+const FeaturedItem = (props) => {
+    const { item } = props;
+
+    if (props.isLoading) {
+        return <Loading />
+    }
+    if (props.errMess) {
+        return (
+            <View>
+                <Text> {props.errMess}</Text>
+            </View>
+        )
+    }
+
     // use conditional rendering to make sure item is defined so no Errors
     if (item) {
         return (
@@ -56,9 +70,21 @@ const HomeScreen = () => {
     <ScrollView>
         {/* scroll view loads all components at once versus FlatList which does lazy loading, so if long list use FlatList */}
         {/* <Text> Home Screen </Text> */}
-        <FeaturedItem item={featCampsite} />
-        <FeaturedItem item={featPromotion} />
-        <FeaturedItem item={featPartner} />
+        <FeaturedItem 
+            item={featCampsite} 
+            isLoading={campsites.isLoading}
+            errMess={campsites.errMess}
+        />
+        <FeaturedItem 
+            item={featPromotion} 
+            isLoading={promotions.isLoading}
+            errMess={promotions.errMess}
+        />
+        <FeaturedItem 
+            item={featPartner} 
+            isLoading={partners.isLoading}
+            errMess={partners.errMess}
+        />
 
     </ScrollView>
     );
