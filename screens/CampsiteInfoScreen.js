@@ -1,16 +1,20 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import RenderCampsite from '../features/campsites/RenderCampsite';
 // import { COMMENTS } from '../shared/comments';
+import { toggleFavorite } from '../features/favorites/favoritesSlice';
 
 const CampsiteInfoScreen = ({ route }) => {
     const { campsite } = route.params;
     const comments= useSelector((state) => state.comments);
 
+    const favorites = useSelector((state) => state.favorites);
+    const dispatch = useDispatch();
+
     //removiing local state variable for comments, and leaving it for favorite
     // const [comments, setComments ] = useState(COMMENTS);
-    const [favorite, setFavorite] = useState(false);
+    // const [favorite, setFavorite] = useState(false);
 
     const renderCommentItem = ({ item }) => {
         return (
@@ -42,8 +46,9 @@ const CampsiteInfoScreen = ({ route }) => {
                 {/* do it inside a react fragment so still only one passing in a single parent component  */}
                     <RenderCampsite 
                     campsite={campsite} 
-                    isFavorite={favorite}
-                    markFavorite={() => setFavorite(true)}
+                    isFavorite={favorites.includes(campsite.id)}
+                    // markFavorite={() => setFavorite(true)}
+                    markFavorite={() => dispatch(toggleFavorite(campsite.id))}
                     />
                     
                     <Text style={styles.commentsTitle}>Comments</Text>
