@@ -1,25 +1,37 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { FlatList } from 'react-native';
-import { Avatar, ListItem } from 'react-native-elements';
-import { CAMPSITES } from '../shared/campsites'
+// import { Avatar, ListItem } from 'react-native-elements';
+import { Tile } from 'react-native-elements';
+// import { CAMPSITES } from '../shared/campsites';
+import { useSelector } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
 const DirectoryScreen = ({ navigation }) => {
-    const [ campsites, setCampsites ] = useState(CAMPSITES);
+    // const [ campsites, setCampsites ] = useState(CAMPSITES);
+    const campsites = useSelector((state) => state.campsites);
 
     const renderDirectoryItem = ({ item: campsite }) => {
         //renamed item to campsite in the destructuring of item to use it here
         return (
             // <ListItem onPress={() => props.onPress(campsite.id)}>
-            <ListItem onPress={() => navigation.navigate('CampsiteInfo', { campsite })}>
-                {/* above sets the campsite param via the navigation's prop's navigate() fx */}
-                <Avatar source={campsite.image} rounded />
+            // <ListItem 
+            <Tile
+                title={campsite.name}
+                caption={campsite.description}
+                featured
+                //the above makes it so the name appears on the tile
+                onPress={() => navigation.navigate('CampsiteInfo', { campsite })}
+                imageSrc={{ uri: baseUrl + campsite.image }}
+            />
+                /* <Avatar source={campsite.image} rounded />
                 <ListItem.Content>
                     <ListItem.Title>{campsite.name}</ListItem.Title>
                     <ListItem.Subtitle>
                         {campsite.description}
                     </ListItem.Subtitle>
-                </ListItem.Content>
-            </ListItem>
+                </ListItem.Content> */
+            /* </ListItem> */
+            
         );
     };
     return (
@@ -27,7 +39,8 @@ const DirectoryScreen = ({ navigation }) => {
             // data={props.campsites}
                 //above is passing it an array from props.campsites
 
-            data={campsites}
+            // data={campsites}
+            data={campsites.campsitesArray}
             renderItem={renderDirectoryItem}
             //received fro above fx
             keyExtractor={(item) => item.id.toString()}

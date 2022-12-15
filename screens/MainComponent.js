@@ -11,7 +11,12 @@ import AboutScreen from './AboutScreen';
 import ContactScreen from './ContactScreen';
 import { Icon } from 'react-native-elements';
 import logo from '../assets/images/logo.png';
-
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchPartners } from '../features/partners/partnersSlice';
+import { fetchCampsites } from '../features/campsites/campsitesSlice';
+import { fetchPromotions } from '../features/promotions/promotionsSlice';
+import { fetchComments } from '../features/commentsSlice'; 
 
 const Drawer = createDrawerNavigator();
 
@@ -155,6 +160,17 @@ const Main = () => {
         //set fx for setting the variable will be "setCampsites"
     // const [selectedCampsiteId, setSelectedCampsiteId] = useState();
     //********************* */
+
+    const dispatch = useDispatch();
+
+    //when app loaded, the Main component will get mounted and the useEffect hook will get called and the data will be fetched and loaded into the redux store, making it available for all of our components to access and to make changes to if necessary
+    useEffect(() => {
+        dispatch(fetchCampsites());
+        dispatch(fetchPromotions());
+        dispatch(fetchPartners());
+        dispatch(fetchComments());
+    }, [dispatch]);
+    //above is passing the dispatch fx in the dependancy array, not req'd since it doesn't change, but it is best practice
     return (
         <View 
             style= {{ 

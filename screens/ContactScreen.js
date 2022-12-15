@@ -1,6 +1,7 @@
 import { ScrollView, Text } from 'react-native';
 import { Card } from 'react-native-elements';
 
+// this screen does not have a state variable, so the only one thus far that does not have to be connected to Redux
 const ContactScreen = () => {
     return (
         <ScrollView>
