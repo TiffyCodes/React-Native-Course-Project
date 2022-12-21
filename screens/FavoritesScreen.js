@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Avatar, ListItem } from 'react-native-elements';
 import Loading from '../components/LoadingComponent';
 //the above lets you see the loading component while it is loading
@@ -31,7 +31,25 @@ const FavoritesScreen = ({navigation }) => {
                 <View style={styles.deleteView}>
                     <TouchableOpacity
                         style={styles.deleteTouchable}
-                        onPress={() => dispatch(toggleFavorite(campsite.id))}
+                        // onPress={() => dispatch(toggleFavorite(campsite.id))}
+                        // ^^ replaced the above that deleted the favorite right away, with an alert below
+                        onPress={() => Alert.alert('Delete Favorite?', 
+                            'Are you sure you wish to delete the favorite campsite ' + campsite.name + '?',
+                            // below is an array of buttons
+                            [
+                                {
+                                    text: 'Cancel',
+                                    onPress: () => console.log(campsite.name + 'Not Deleted'),
+                                    style: 'cancel'
+                                },
+                                {
+                                    text: 'OK',
+                                    onPress: () => dispatch(toggleFavorite(campsite.id))
+                                }
+                            ],
+                            {cancelable: false}
+                            // **COOL FEATURE- above makes it so user can't tap outside of box to not select cancel or delete, must select one
+                        )}
                     >
                         <Text style={styles.deleteText}>Delete</Text>
                     </TouchableOpacity>
