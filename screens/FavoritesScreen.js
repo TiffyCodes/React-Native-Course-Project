@@ -1,13 +1,15 @@
-import { useSelector } from 'react-redux';
-import { View, FlatList, Text } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Avatar, ListItem } from 'react-native-elements';
 import Loading from '../components/LoadingComponent';
 //the above lets you see the loading component while it is loading
 import { baseUrl } from '../shared/baseUrl';
 //the above allows us to get our images from json server
+import { SwipeRow } from 'react-native-swipe-list-view';
+import { toggleFavorite } from '../features/favorites/favoritesSlice';
 
 
-const FavoriteScreen = ({navigation }) => {
+const FavoritesScreen = ({navigation }) => {
 //above is destructuring the navigation prop in the parameter list
     //need state data from the redux store for campsites and favorites- neeed useSelector
     const { campsitesArray, isLoading, errMess } = useSelector((state) => state.campsites);
@@ -17,27 +19,43 @@ const FavoriteScreen = ({navigation }) => {
     const favorites = useSelector((state) => state.favorites);
     //the above will return the array from the redux store
 
+    const dispatch = useDispatch(); 
+
     //create a renderFavoriteItem fx that we will use in the FlatList (further below)
     const renderFavoriteItem = ({ item: campsite }) => {
         //destructure item from the data array like above, calling item "campsite" as new name which will come in handy when calling Navigate method, and then we will return the ListItem component
         return (
-            <ListItem
-                onPress={() => navigation.navigate('Directory', {
-                    //above we are calling the navigation prop's navigate fx; earlier we navigated from Directory to Info screen, we were in the same stack navigator, but here, no, we have to tell the navigate method specifcally which navigator to use and which screen which you DON'T need to do like when you went from CampsiteInfo to Directory
-                    screen: 'CampsiteInfo',
-                    params: { campsite } 
-                    //params set to an object with a key of campsites equal to our campsites object, so can shorthand to just campsite
-                })
-            }
-            >
-                <Avatar rounded source ={{ uri: baseUrl + campsite.image }} />
-                <ListItem.Content>
-                    <ListItem.Title>{campsite.name}</ListItem.Title>
-                    <ListItem.Subtitle>
-                        {campsite.description}
-                    </ListItem.Subtitle>
-                </ListItem.Content>
-            </ListItem>
+            <SwipeRow rightOpenValue={-100}>
+                {/* above so if you swipe from right to left at least 100px then it will show up */}
+                {/* the first view is the hidden view with the extra options, so put the ListView in the 2nd view so shows up as default */}
+                <View style={styles.deleteView}>
+                    <TouchableOpacity
+                        style={styles.deleteTouchable}
+                        onPress={() => dispatch(toggleFavorite(campsite.id))}
+                    >
+                        <Text style={styles.deleteText}>Delete</Text>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <ListItem
+                        onPress={() => navigation.navigate('Directory', {
+                            //above we are calling the navigation prop's navigate fx; earlier we navigated from Directory to Info screen, we were in the same stack navigator, but here, no, we have to tell the navigate method specifcally which navigator to use and which screen which you DON'T need to do like when you went from CampsiteInfo to Directory
+                            screen: 'CampsiteInfo',
+                            params: { campsite } 
+                            //params set to an object with a key of campsites equal to our campsites object, so can shorthand to just campsite
+                        })
+                    }
+                    >
+                        <Avatar rounded source ={{ uri: baseUrl + campsite.image }} />
+                        <ListItem.Content>
+                            <ListItem.Title>{campsite.name}</ListItem.Title>
+                            <ListItem.Subtitle>
+                                {campsite.description}
+                            </ListItem.Subtitle>
+                        </ListItem.Content>
+                    </ListItem>
+                </View>
+            </SwipeRow>
         );
     };
 
@@ -68,6 +86,27 @@ const FavoriteScreen = ({navigation }) => {
 
 };
 
+const styles = StyleSheet.create({
+    deleteView: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flex: 1
+    },
+    deleteTouchable: {
+        backgroundColor: 'red',
+        height: '100%',
+        justifyContent: 'center'
+    },
+    deleteText: {
+        color: 'white',
+        fontWeight: '700',
+        textAlign: 'center',
+        fontSize: 16,
+        width:100
+    }
+});
+
 ///once done, updaate MainComponent and then test it
 
-export default FavoriteScreen;
+export default FavoritesScreen;
