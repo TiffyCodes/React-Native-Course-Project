@@ -7,6 +7,7 @@ import { baseUrl } from '../shared/baseUrl';
 //the above allows us to get our images from json server
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { toggleFavorite } from '../features/favorites/favoritesSlice';
+import * as Animatable from 'react-native-animatable';
 
 
 const FavoritesScreen = ({navigation }) => {
@@ -89,17 +90,19 @@ const FavoritesScreen = ({navigation }) => {
         );
     }
     return (
-        <FlatList 
-            data={campsitesArray.filter((campsite) =>
-                favorites.includes(campsite.id))}
-            //remember, the favorites array is an array of id's!!
-            //above need to check to see if ID matches the id's listed under favorites array
-            //then the filter method will return a NEW ARRAY of campsite ID's that match favorites
+        <Animatable.View animation='fadeInRightBig' duration={2000}>
+            <FlatList 
+                data={campsitesArray.filter((campsite) =>
+                    favorites.includes(campsite.id))}
+                //remember, the favorites array is an array of id's!!
+                //above need to check to see if ID matches the id's listed under favorites array
+                //then the filter method will return a NEW ARRAY of campsite ID's that match favorites
 
-            //then give FlatList a renderItem prop
-            renderItem={renderFavoriteItem}
-            keyExtractor={(item) => item.id.toString()}
-        />
+                //then give FlatList a renderItem prop
+                renderItem={renderFavoriteItem}
+                keyExtractor={(item) => item.id.toString()}
+            />
+        </Animatable.View>
     );
 
 };

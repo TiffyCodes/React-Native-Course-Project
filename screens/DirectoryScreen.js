@@ -6,6 +6,7 @@ import { Tile } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import Loading from '../components/LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 const DirectoryScreen = ({ navigation }) => {
     // const [ campsites, setCampsites ] = useState(CAMPSITES);
@@ -25,25 +26,26 @@ const DirectoryScreen = ({ navigation }) => {
     const renderDirectoryItem = ({ item: campsite }) => {
         //renamed item to campsite in the destructuring of item to use it here
         return (
-            // <ListItem onPress={() => props.onPress(campsite.id)}>
-            // <ListItem 
-            <Tile
-                title={campsite.name}
-                caption={campsite.description}
-                featured
-                //the above makes it so the name appears on the tile
-                onPress={() => navigation.navigate('CampsiteInfo', { campsite })}
-                imageSrc={{ uri: baseUrl + campsite.image }}
-            />
-                /* <Avatar source={campsite.image} rounded />
-                <ListItem.Content>
-                    <ListItem.Title>{campsite.name}</ListItem.Title>
-                    <ListItem.Subtitle>
-                        {campsite.description}
-                    </ListItem.Subtitle>
-                </ListItem.Content> */
-            /* </ListItem> */
-            
+            <Animatable.View animation='fadeInRightBig' duration={2000}>
+                {/* // <ListItem onPress={() => props.onPress(campsite.id)}>
+                // <ListItem  */}
+                <Tile
+                    title={campsite.name}
+                    caption={campsite.description}
+                    featured
+                    //the above makes it so the name appears on the tile
+                    onPress={() => navigation.navigate('CampsiteInfo', { campsite })}
+                    imageSrc={{ uri: baseUrl + campsite.image }}
+                />
+                    {/* /* /* <Avatar source={campsite.image} rounded />
+                    <ListItem.Content>
+                        <ListItem.Title>{campsite.name}</ListItem.Title>
+                        <ListItem.Subtitle>
+                            {campsite.description}
+                        </ListItem.Subtitle>
+                    </ListItem.Content> */
+                /* </ListItem> */  }
+            </Animatable.View>
         );
     };
     return (
