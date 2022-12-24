@@ -38,6 +38,7 @@ const commentsSlice = createSlice({
             state.commentsArray.push(action.payload)
         }
     },
+    //just modifying your state and returning the status of the state
     extraReducers: {
         [fetchComments.pending]: (state) => {
             state.isLoading = true;

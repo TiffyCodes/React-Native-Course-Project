@@ -32,7 +32,8 @@ const RenderCampsite = (props) => {
         onPanResponderEnd: (e, gestureState) => {
         //above is an event handler; the evenet we don't need as much so just putting because need it to be able to get to the 2nd parameter- gesture state
             
-       
+        //GESTURE 3- Workshop Week III
+        const isRightSwipe = ({ dx }) => dx > 200;
         
         console.log('pan responder end', gestureState);
             if (isLeftSwipe(gestureState)) {
@@ -54,6 +55,8 @@ const RenderCampsite = (props) => {
                     ],
                     { cancelable: false }
                 );
+            } else if (isRightSwipe(gestureState)) {
+                props.onShowModal()
             }
         }
     });
