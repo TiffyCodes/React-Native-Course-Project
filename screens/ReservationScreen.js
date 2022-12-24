@@ -91,11 +91,19 @@ const ReservationScreen = () => {
                     <Button 
                         onPress={() => {
                             Alert.alert(
+
+                                // Option 1
                                 'Begin search?',
                                 `Number of Campers: ${campers}  
                                 \nHike-In?: ${hikeIn ? 'Yes' : 'No'} 
                                 \nDate : ${date.toLocaleDateString('en-US')}`,
                                 [
+                                //option 2 would be to put the above in a variable 1sst above calling Alert.alert
+                                //      const message = `Number of Campers: ${campers}
+                                //      \nHike-In? ${hikeIn}
+                                //      \nDate: ${date.toLocaleDateString('en-US')}`;
+                                //       Alert.alert(
+                                //      'Begin Search?',
                                     {
                                         text: 'Cancel',
                                         style: 'cancel',
