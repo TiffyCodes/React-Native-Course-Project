@@ -3,6 +3,7 @@ import { Text, View, ScrollView, StyleSheet, Switch, Button, Modal, Alert } from
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Animatable from 'react-native-animatable';
+import * as Notifications from 'expo-notifications';
 
 const ReservationScreen = () => {
     //set up multiple state variables
@@ -18,13 +19,58 @@ const ReservationScreen = () => {
         setDate(currentDate);
     };
     
-    // const handleReservation= () => {
-    //     console.log('campers: ', campers);
-    //     console.log('hikeIn: ', hikeIn);
-    //     console.log('date:', date);
-    //     setShowModal(!showModal);
+    const handleReservation= () => {
+        Alert.alert(
+            // Option 1
+            'Begin search?',
+            `Number of Campers: ${campers}  
+            \nHike-In?: ${hikeIn} 
+            \nDate: ${date.toLocaleDateString('en-US')}`,
+            [
+            //option 2 would be to put the above in a variable 1st above calling Alert.alert
+            //      const message = `Number of Campers: ${campers}
+            //      \nHike-In? ${hikeIn}
+            //      \nDate: ${date.toLocaleDateString('en-US')}`;
+            //       Alert.alert(
+            //      'Begin Search?',
+            //       message,
+
+                //** INCORRECT FROM WORKSHOP THIS SECTION */ {
+                //     text: 'Cancel',
+                //     style: 'cancel',
+                //     onPress: () => resetForm()
+                // },
+                // {
+                //     text: 'OK',
+                //     onPress: () => resetForm()
+                // }
+
+                {
+                    text: 'Cancel',
+                    onPress: () => {
+                        console.log('Reservation Search Canceled');
+                        resetForm();
+                    },
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        presentLocalNotification(
+                            date.toLocaleDateString('en-US')
+                        );
+                        resetForm();
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+        console.log('campers: ', campers);
+        console.log('hikeIn: ', hikeIn);
+        console.log('date:', date);
+        // setShowModal(!showModal);
         
-    // };
+    };
 
     const resetForm = () => {
         setCampers(1);
@@ -32,6 +78,61 @@ const ReservationScreen = () => {
         setDate(new Date());
         setShowCalendar(false);
     };
+
+    const presentLocalNotification = async (reservationDate) => {
+        const sendNotification = () => {
+            Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                    shouldShowAlert: true,
+                    shouldPlaySound: true,
+                    shouldSetBadge: true
+                })
+            });
+
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: 'Your Campsite Reservation Search',
+                    body: `Search for ${reservationDate} requested`
+                },
+                trigger: null
+            });
+        };
+
+        let permissions = await Notifications.getPermissionsAsync();
+        if (!permissions.granted) {
+            permissions = await Notifications.requestPermissionsAsync();
+        }
+        if (permissions.granted) {
+            sendNotification();
+        }
+    };
+
+    //BELOW WAS MY CODE-- notification didn't work
+    // const presentLocalNotification = async (reservationDate) => {
+    //     const sendNotification = () => {
+    //         Notifications.setNotificationHandler({
+    //             handleNotification: async () => ({
+    //                 shouldShowAlert: true,
+    //                 shouldPlaySound: true,
+    //                 shouldSetBadge: true
+    //             })
+    //         });
+    //         Notifications.scheduleNotificationAsync({
+    //             content: {
+    //                 title: 'Your Campsite Reservation Search',
+    //                 body: `Search for ${reservationDate} requested`
+    //             },
+    //             trigger: null
+    //         });
+    //     };
+    //     let permissions = await Notifications.getPermissionsAsync();
+    //     if (!permisions.granted) {
+    //         permissions = await Notifications.requestPermissionsAsync();
+    //     }
+    //     if (permissions.granted) {
+    //         sendNotification();
+    //     }
+    // };
 
     return (
         <ScrollView>
@@ -89,34 +190,7 @@ const ReservationScreen = () => {
                 {/* below is button for the onDateChange fx way above combined with what is immediately above I think */}
                 <View style={styles.formRow}>
                     <Button 
-                        onPress={() => {
-                            Alert.alert(
-
-                                // Option 1
-                                'Begin search?',
-                                `Number of Campers: ${campers}  
-                                \nHike-In?: ${hikeIn ? 'Yes' : 'No'} 
-                                \nDate : ${date.toLocaleDateString('en-US')}`,
-                                [
-                                //option 2 would be to put the above in a variable 1sst above calling Alert.alert
-                                //      const message = `Number of Campers: ${campers}
-                                //      \nHike-In? ${hikeIn}
-                                //      \nDate: ${date.toLocaleDateString('en-US')}`;
-                                //       Alert.alert(
-                                //      'Begin Search?',
-                                    {
-                                        text: 'Cancel',
-                                        style: 'cancel',
-                                        onPress: () => resetForm()
-                                    },
-                                    {
-                                        text: 'OK',
-                                        onPress: () => resetForm()
-                                    }
-                                ],
-                                { cancelable: false }
-                            );
-                        }}
+                        onPress={() => handleReservation()}
                         title='Search Availability'
                         color='#5637DD'
                         accessibilityLabel='Tap me to search for available campsites to reserve'
@@ -194,9 +268,9 @@ const styles= StyleSheet.create({
     // },
     // modalText: {
     //     fontSize: 18,
-    //     margin: 10
-    }
+    //     margin: 1
+    
 
-)
+});
 
 export default ReservationScreen;

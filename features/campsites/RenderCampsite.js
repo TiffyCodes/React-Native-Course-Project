@@ -1,10 +1,11 @@
 //adding PanResponder and Alert for the response to the slide towards the right and the alert to see if you want to add the campsite as a favorite
-import { Text, View, StyleSheet, PanResponder, Alert } from 'react-native';
+import { Text, View, StyleSheet, PanResponder, Alert, Share } from 'react-native';
 //Gesture 2 (don't like too much bt can use this elsewhere versus how used in this app to bounce if make a gesture on capsite directory, rendered campsite-- below will import useRef from React so can give the user a heads up when they have started a gesture
 import { useRef } from 'react';
 import { Card, Icon } from 'react-native-elements';
 import { baseUrl } from '../../shared/baseUrl';
 import * as Animatable from 'react-native-animatable';
+import { TouchableHighlightComponent } from 'react-native';
 
 const RenderCampsite = (props) => {
     const { campsite } = props;
@@ -60,6 +61,22 @@ const RenderCampsite = (props) => {
             }
         }
     });
+
+    //an event handler fx
+    const shareCampsite= (title, message, url) => {
+        Share.share(
+            {
+                title,
+                //title below is not required, but for Android, you must have a msg and for iOS you must have either a msg or url
+                message: `${title}: ${message} ${url}`,
+                url
+            },
+            {
+                dialogTitle: 'Share ' + title
+                //above is for Android
+            }
+        );
+    };
     
 
     //below is conditional rendering
@@ -114,6 +131,24 @@ const RenderCampsite = (props) => {
                             reverse
                             //reverse will reverse the color scheme
                             onPress={() => props.onShowModal()}
+                        />
+
+                        <Icon
+                            name='share'
+                            //added JS above to say if is favorite, show heart icon and if not, show heart-o
+                            type='font-awesome'
+                            color='#5637DD'
+                            raised
+                            // will add a shadow 
+                            reverse
+                            //reverse will reverse the color scheme
+                            onPress={() => 
+                                shareCampsite(
+                                    campsite.name,
+                                    campsite.description,
+                                    baseUrl + campsite.image
+                                )
+                            }
                         />
                 </View>
             </Card>
