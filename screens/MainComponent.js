@@ -21,6 +21,7 @@ import { fetchComments } from '../features/commentsSlice';
 //below we will import what we did on the Favorites screen; then add a astack navigator
 import FavoritesScreen from './FavoritesScreen';
 import LoginScreen from './LoginScreen';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/core';
 
 const Drawer = createDrawerNavigator();
 
@@ -152,10 +153,16 @@ const LoginNavigator = () => {
             <Stack.Screen 
                 name='Login'
                 component= {LoginScreen}
-                options={({navigation}) => ({ 
+                options={({navigation, route }) => ({ 
+                    headerTitle: getFocusedRouteNameFromRoute(route),
                     headerLeft: () => (
                         <Icon 
-                        name='sign-in'
+                        name={
+                            getFocusedRouteNameFromRoute(route) ===
+                            'Register'
+                                ? 'user-plus'
+                                : 'sign-in'
+                        }
                         type='font-awesome'
                         iconStyle={styles.stackIcon}
                         onPress={()=> navigation.toggleDrawer()}
@@ -215,7 +222,7 @@ const DirectoryNavigator = () => {
 const CustomDrawerContent = (props) => (
     <DrawerContentScrollView {...props}>
         <View style={styles.drawerHeader}>
-            <View style={{ flex: 1}}>
+            <View style={{ flex: 1 }}>
                 <Image source={logo} style={styles.drawerImage} />
             </View>
             <View style={{ flex: 2}}>
@@ -224,7 +231,7 @@ const CustomDrawerContent = (props) => (
         </View>
         <DrawerItemList {...props} labelStyle={{ fontWeight: 'bold' }} />
     </DrawerContentScrollView>
-)
+);
 
 
 const Main = () => {
