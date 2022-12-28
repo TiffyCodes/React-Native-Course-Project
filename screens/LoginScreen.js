@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { CheckBox, Input, Button, Icon } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as ImagePicker from 'expo-image-picker';
+import { baseUrl } from '../shared/baseUrl';
+import logo from '../assets/images/logo.png';
 
 const LoginTab = ( {navigation} ) => {
     const [username, setUsername] = useState('');
@@ -23,7 +26,7 @@ const LoginTab = ( {navigation} ) => {
                     username,
                     password
                 })
-            ).catch((error) => console.log('Could not save user info', error))
+            ).catch((error) => console.log('Could not save user info', error));
             //using a .catch() method that will check for a rejected promise (resulting in an error since will return a promise) and will log the error to the console.
         } else {
             SecureStore.deleteItemAsync('userinfo').catch((error) => 
@@ -124,6 +127,7 @@ const RegisterTab = () => {
     const [lastName, setLastName]= useState('');
     const [email, setEmail]= useState('');
     const [remember, setRemember]= useState(false);
+    const [imageUrl, setImageUrl] = useState(baseUrl + 'images/logo.png');
 
     const handleRegister = () => {
         const userInfo = {
@@ -152,9 +156,33 @@ const RegisterTab = () => {
         };
     };
 
+    const getImageFromCamera = async () => {
+        const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+    
+        if (cameraPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchCameraAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            });
+            if (!capturedImage.cancelled) {
+                console.log(capturedImage);
+                setImageUrl(capturedImage.uri);
+            }
+        }
+    };
+
     return (
         <ScrollView>
             <View style={styles.container}>
+                <View style={styles.imageContainer}>
+                    <Image 
+                        source={{uri: imageUrl}}
+                        loadingIndicatorSource={logo}
+                        //the two are the same, but in real life you may use a smaller version to show it's loading
+                        style={styles.image}
+                    />
+                    <Button title='Camera' onPress={getImageFromCamera} />
+                </View>
             <Input 
                 placeholder='Username'
                 leftIcon={{
@@ -297,6 +325,17 @@ const styles = StyleSheet.create({
         margin: 20,
         marginRight: 40,
         marginLeft: 40
+    },
+    imageContainer : {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        margin: 10
+    },
+    image: {
+        width: 60,
+        height: 60
     }
 });
 
